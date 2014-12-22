@@ -1,7 +1,8 @@
-require "rubygems"
-require "rack/test"
+require 'rubygems'
+require 'rack/test'
 require 'minitest/autorun'
 require_relative '../lib/news.rb'
+require 'rack/lint'
 
 class NewsTest < Minitest::Test
   include Rack::Test::Methods
