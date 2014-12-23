@@ -3,6 +3,7 @@ require 'rack/test'
 require 'minitest/autorun'
 require_relative '../lib/news.rb'
 require 'rack/lint'
+require 'json'
 
 class NewsTest < Minitest::Test
   include Rack::Test::Methods
@@ -18,15 +19,34 @@ class NewsTest < Minitest::Test
   end
 
   def test_app_returns_submitted_stories
-    skip 'pending'
     get '/stories'
     assert_equal 200, last_response.status
+    data = JSON.parse last_response.body
+    assert_equal [
+          {
+            'id' => 1,
+            'title' =>'title1',
+            'url' => 'http://www.lipton1.com'
+          },
+          {
+            'id' => 2,
+            'title' => 'title2',
+            'url' => 'http://www.lipton2.com'
+          }
+        ], data
+    assert_equal 'application/json', last_response.content_type
   end
 
   def test_getting_an_single_story
-    skip 'pending'
     get '/stories/1'
     assert_equal 200, last_response.status
+    data = JSON.parse last_response.body
+    assert_equal ({
+        'id' => '1',
+        'title' => 'title',
+        'url' => 'http://www.lipton.com'
+      }), data
+    assert_equal "application/json", last_response.content_type
   end
 
   def test_submitting_a_new_story
