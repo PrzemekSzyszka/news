@@ -1,16 +1,17 @@
+ENV['RAILS_ENV'] ||= 'test'
 require 'rubygems'
 require 'rack/test'
 require 'minitest/autorun'
-require_relative '../lib/news.rb'
+require 'api.rb'
 require 'rack/lint'
 require 'json'
-require_relative '../app/models/story.rb'
+require 'story.rb'
 
 class NewsTest < Minitest::Test
   include Rack::Test::Methods
 
   def app
-    News.new
+    Api.new
   end
 
   def setup
