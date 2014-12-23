@@ -4,12 +4,17 @@ require 'minitest/autorun'
 require_relative '../lib/news.rb'
 require 'rack/lint'
 require 'json'
+require_relative '../app/models/story.rb'
 
 class NewsTest < Minitest::Test
   include Rack::Test::Methods
 
   def app
     News.new
+  end
+
+  def setup
+    Story.create!(id: 1, title: 'Lorem ipsum', url: 'http://www.lipsum.com/')
   end
 
   def test_app_returns_an_response
