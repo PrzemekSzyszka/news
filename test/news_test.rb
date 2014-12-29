@@ -11,7 +11,7 @@ class NewsTest < Minitest::Test
   include Rack::Test::Methods
 
   def app
-    Api.new
+    Rack::Lint.new(Api.new)
   end
 
   def setup
