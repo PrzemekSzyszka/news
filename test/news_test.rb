@@ -3,8 +3,8 @@ require 'rack/test'
 require 'minitest/autorun'
 require 'api/stories'
 require 'rack/lint'
-require 'json'
 require 'story'
+require 'test_helper'
 
 class NewsTest < Minitest::Test
   include Rack::Test::Methods

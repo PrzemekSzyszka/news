@@ -24,4 +24,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "dotenv-rails", "~> 1.0.2"
   spec.add_development_dependency "activerecord", "~> 4.2.0"
   spec.add_development_dependency "sqlite3", "~> 1.3.1"
+  spec.add_development_dependency "database_cleaner", "~> 1.3.0"
 end
