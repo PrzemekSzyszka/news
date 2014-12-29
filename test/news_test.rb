@@ -44,7 +44,7 @@ class NewsTest < Minitest::Test
   end
 
   def test_getting_an_single_story
-    get '/stories/1'
+    get '/stories/#{story.id}'
     assert_equal 200, last_response.status
     data = JSON.parse last_response.body
     assert_equal ({
@@ -63,25 +63,25 @@ class NewsTest < Minitest::Test
 
   def test_updating_a_story
     skip 'pending'
-    put '/stories/1', 'some data'
+    put '/stories/#{story.id}', 'some data'
     assert_equal 204, last_response.status
   end
 
   def test_upvoting_a_story
     skip 'pending'
-    put '/stories/upvote', 'some data'
+    patch '/stories/#{story.id}/vote', 'some data'
     assert_equal 200, last_response.status
   end
 
   def test_downvoting_a_story
     skip 'pending'
-    put '/stories/downvote', 'some data'
+    patch '/stories/#{story.id}vote', 'some data'
     assert_equal 200, last_response.status
   end
 
   def test_undoing_a_vote
     skip 'pending'
-    put '/stories/undo', 'some data'
+    delete '/stories/#{story.id}/vote'
     assert_equal 204, last_response.status
   end
 
