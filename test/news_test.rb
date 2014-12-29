@@ -39,9 +39,11 @@ class NewsTest < Minitest::Test
   end
 
   def test_submitting_a_new_story
-    skip 'pending'
-    post '/stories'
+    post '/stories', { title: 'Lorem epsum', url: 'http://www.lorem.com' }
     assert_equal 201, last_response.status
+
+    data = JSON.parse last_response.body
+    assert data['id'] != nil
   end
 
   def test_updating_a_story
