@@ -22,8 +22,8 @@ class NewsTest < Minitest::Test
     assert_equal 200, last_response.status
     data = JSON.parse last_response.body
 
-    assert_equal data[0]['id'], 1
-    assert_equal data[1]['id'], 2
+    assert_equal 1, data[0]['id']
+    assert_equal 2, data[1]['id']
     assert_equal 'application/json', last_response.content_type
   end
 
@@ -31,11 +31,10 @@ class NewsTest < Minitest::Test
     get '/stories/1'
     assert_equal 200, last_response.status
     data = JSON.parse last_response.body
-    assert_equal ({
-        'id' => '1',
-        'title' => 'title',
-        'url' => 'http://www.lipton.com'
-      }), data
+
+    assert_equal 1, data['id']
+    assert_equal 'Lorem ipsum', data['title']
+    assert_equal 'http://www.lipsum.com/', data['url']
     assert_equal "application/json", last_response.content_type
   end
 
