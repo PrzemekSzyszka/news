@@ -28,23 +28,14 @@ class NewsTest < Minitest::Test
     get '/stories'
     assert_equal 200, last_response.status
     data = JSON.parse last_response.body
-    assert_equal [
-          {
-            'id' => 1,
-            'title' =>'title1',
-            'url' => 'http://www.lipton1.com'
-          },
-          {
-            'id' => 2,
-            'title' => 'title2',
-            'url' => 'http://www.lipton2.com'
-          }
-        ], data
+
+    assert_equal data[0]['id'], 1
+    assert_equal data[1]['id'], 2
     assert_equal 'application/json', last_response.content_type
   end
 
   def test_getting_an_single_story
-    get '/stories/#{story.id}'
+    get '/stories/1'
     assert_equal 200, last_response.status
     data = JSON.parse last_response.body
     assert_equal ({
