@@ -1,8 +1,7 @@
-require 'rubygems'
 require 'rack/test'
+require 'rack/lint'
 require 'minitest/autorun'
 require 'api/stories'
-require 'rack/lint'
 require 'story'
 require 'test_helper'
 
