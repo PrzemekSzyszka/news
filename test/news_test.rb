@@ -2,10 +2,10 @@ ENV['RAILS_ENV'] ||= 'test'
 require 'rubygems'
 require 'rack/test'
 require 'minitest/autorun'
-require 'api.rb'
+require 'api'
 require 'rack/lint'
 require 'json'
-require 'story.rb'
+require 'story'
 
 class NewsTest < Minitest::Test
   include Rack::Test::Methods
