@@ -7,7 +7,7 @@ task default: :test
 
 desc 'Run all tests by default'
 task :test do
-  exec('bundle exec ruby -Ilib -Itest -Iapp/models test/news_test.rb')
+  exec('bundle exec ruby -Ilib -Itest -Ilib/models test/news_test.rb')
 end
 
 namespace :db do
