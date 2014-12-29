@@ -1,8 +1,7 @@
-ENV['RAILS_ENV'] ||= 'test'
 require 'rubygems'
 require 'rack/test'
 require 'minitest/autorun'
-require 'api'
+require 'api/stories'
 require 'rack/lint'
 require 'json'
 require 'story'
@@ -11,17 +10,11 @@ class NewsTest < Minitest::Test
   include Rack::Test::Methods
 
   def app
-    Rack::Lint.new(Api.new)
+    Rack::Lint.new(Stories.new)
   end
 
   def setup
-    Story.create!(id: 1, title: 'Lorem ipsum', url: 'http://www.lipsum.com/')
-  end
-
-  def test_app_returns_an_response
-    get "/"
-    assert_equal 200, last_response.status
-    assert_equal "Hello News!", last_response.body
+    Story.create!(title: 'Lorem ipsum', url: 'http://www.lipsum.com/')
   end
 
   def test_app_returns_submitted_stories

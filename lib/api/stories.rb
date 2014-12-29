@@ -1,11 +1,6 @@
-require 'sinatra'
-require 'json'
+require_relative 'base'
 
-class Api < Sinatra::Base
-  get '/' do
-    'Hello News!'
-  end
-
+class Stories < Base
   get '/stories' do
     content_type :json
     [
