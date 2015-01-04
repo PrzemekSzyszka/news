@@ -47,31 +47,31 @@ class NewsTest < Minitest::Test
 
   def test_updating_a_story
     skip 'pending'
-    put '/stories/#{story.id}', 'some data'
+    put '/stories/1', { id: 1, title: 'Lorem epsum', url: 'http://www.l.com' }
     assert_equal 204, last_response.status
   end
 
   def test_upvoting_a_story
     skip 'pending'
-    patch '/stories/#{story.id}/vote', 'some data'
+    patch '/stories/1/vote', { delta: 1 }
     assert_equal 200, last_response.status
   end
 
   def test_downvoting_a_story
     skip 'pending'
-    patch '/stories/#{story.id}vote', 'some data'
+    patch '/stories/1/vote', { delta: -1 }
     assert_equal 200, last_response.status
   end
 
   def test_undoing_a_vote
     skip 'pending'
-    delete '/stories/#{story.id}/vote'
+    delete '/stories/1/vote'
     assert_equal 204, last_response.status
   end
 
   def test_creating_a_user
     skip 'pending'
-    post '/users', 'some data'
+    post '/users', { username: 'Alan', password: 'Ala1Ma2Kota' }
     assert_equal 201, last_response.status
   end
 end
