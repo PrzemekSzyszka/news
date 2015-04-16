@@ -4,6 +4,7 @@ require 'minitest/autorun'
 require 'api/stories'
 require 'story'
 require 'test_helper'
+require 'pry'
 
 class NewsTest < ActiveSupport::TestCase
   include Rack::Test::Methods
@@ -75,5 +76,12 @@ class NewsTest < ActiveSupport::TestCase
     skip 'pending'
     post '/users', { username: 'Alan', password: 'Ala1Ma2Kota' }
     assert_equal 201, last_response.status
+  end
+
+  def test_fetching_not_existing_story
+    get '/stories/400'
+    assert_equal 404, last_response.status
+    data = JSON.parse last_response.body
+    assert_equal "Couldn't find Story with 'id'=400", data["error"]
   end
 end
