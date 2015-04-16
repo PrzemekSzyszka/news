@@ -5,7 +5,7 @@ require 'api/stories'
 require 'story'
 require 'test_helper'
 
-class NewsTest < Minitest::Test
+class NewsTest < ActiveSupport::TestCase
   include Rack::Test::Methods
 
   def app
@@ -13,11 +13,9 @@ class NewsTest < Minitest::Test
   end
 
   def setup
+    super
     Story.create!(id: 1, title: 'Lorem ipsum', url: 'http://www.lipsum.com/')
-  end
-
-  def teardown
-    Story.delete(Story.find(1))
+    Story.create!(id: 2, title: 'Lorem ipsum', url: 'http://www.lipsum.com/')
   end
 
   def test_app_returns_submitted_stories

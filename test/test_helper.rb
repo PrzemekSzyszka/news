@@ -1,4 +1,4 @@
-ENV['RAILS_ENV'] ||= 'test'
+ENV['RACK_ENV'] ||= 'test'
 require 'database_cleaner'
 
 class ActiveSupport::TestCase
