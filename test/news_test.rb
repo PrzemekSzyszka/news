@@ -13,7 +13,11 @@ class NewsTest < Minitest::Test
   end
 
   def setup
-    Story.create!(title: 'Lorem ipsum', url: 'http://www.lipsum.com/')
+    Story.create!(id: 1, title: 'Lorem ipsum', url: 'http://www.lipsum.com/')
+  end
+
+  def teardown
+    Story.delete(Story.find(1))
   end
 
   def test_app_returns_submitted_stories
