@@ -2,9 +2,8 @@ require 'rack/test'
 require 'rack/lint'
 require 'minitest/autorun'
 require 'api/stories'
-require 'story'
+require 'api/users'
 require 'test_helper'
-require 'pry'
 
 class NewsTest < ActiveSupport::TestCase
   include Rack::Test::Methods
@@ -73,7 +72,6 @@ class NewsTest < ActiveSupport::TestCase
   end
 
   def test_creating_a_user
-    skip 'pending'
     post '/users', { username: 'Alan', password: 'Ala1Ma2Kota' }
     assert_equal 201, last_response.status
   end

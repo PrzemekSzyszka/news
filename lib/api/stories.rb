@@ -1,7 +1,9 @@
 require_relative 'base'
+require_relative '../models/story'
 
 module API
   class Stories < Base
+
     get '/stories' do
       content_type :json
       Story.all.to_json
