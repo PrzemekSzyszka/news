@@ -13,6 +13,7 @@ module API
     end
 
     post '/stories' do
+      protected!
       story = params[:story]
       story = Story.create!(title: story[:title], url: story[:url])
 

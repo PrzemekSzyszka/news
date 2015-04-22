@@ -9,6 +9,7 @@ class StoriesTest < ActiveSupport::TestCase
 
   def setup
     super
+    @user = User.create!(username: "Ziom", password: "password")
     Story.create!(id: 1, title: 'Lorem ipsum', url: 'http://www.lipsum.com/')
     Story.create!(id: 2, title: 'Lorem ipsum', url: 'http://www.lipsum.com/')
   end
@@ -35,6 +36,7 @@ class StoriesTest < ActiveSupport::TestCase
   end
 
   def test_submitting_a_new_story
+    authorize @user.username, @user.password
     post '/stories', { story: { title: 'Lorem epsum', url: 'http://www.lorem.com' } }
     assert_equal 201, last_response.status
 
@@ -43,11 +45,20 @@ class StoriesTest < ActiveSupport::TestCase
   end
 
   def test_submitting_new_story_fails_when_title_is_missing
+    authorize @user.username, @user.password
     post '/stories', { story: { url: 'http://www.lorem.com' } }
     assert_equal 400, last_response.status
 
     data = JSON.parse last_response.body
     assert_equal "Validation failed: Title can't be blank", data['error']
+  end
+
+  def test_unauthorized_user_fails_to_submit_story
+    post '/stories', { story: { title: 'Lorem epsum', url: 'http://www.lorem.com' } }
+    assert_equal 401, last_response.status
+
+    data = JSON.parse last_response.body
+    assert_equal "Not authorized", data['error']
   end
 
   def test_updating_a_story
