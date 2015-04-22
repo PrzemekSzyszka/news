@@ -40,7 +40,8 @@ class StoriesTest < ActiveSupport::TestCase
 
   def test_submitting_a_new_story
     authorize @user.username, @user.password
-    post '/stories', { story: { title: 'Lorem epsum', url: 'http://www.lorem.com' } }
+    post '/stories', { story: { title: 'Lorem epsum', url: 'http://www.lorem.com' } }.to_json,
+                     { "CONTENT_TYPE" => "application/json" }
     assert_equal 201, last_response.status
 
     data = JSON.parse last_response.body
@@ -49,7 +50,8 @@ class StoriesTest < ActiveSupport::TestCase
 
   def test_submitting_new_story_fails_when_title_is_missing
     authorize @user.username, @user.password
-    post '/stories', { story: { url: 'http://www.lorem.com' } }
+    post '/stories', { story: { url: 'http://www.lorem.com' } }.to_json,
+                     { "CONTENT_TYPE" => "application/json" }
     assert_equal 400, last_response.status
 
     data = JSON.parse last_response.body
@@ -57,7 +59,8 @@ class StoriesTest < ActiveSupport::TestCase
   end
 
   def test_unauthorized_user_fails_to_submit_story
-    post '/stories', { story: { title: 'Lorem epsum', url: 'http://www.lorem.com' } }
+    post '/stories', { story: { title: 'Lorem epsum', url: 'http://www.lorem.com' } }.to_json,
+                     { "CONTENT_TYPE" => "application/json" }
     assert_equal 401, last_response.status
 
     data = JSON.parse last_response.body
@@ -66,13 +69,14 @@ class StoriesTest < ActiveSupport::TestCase
 
   def test_updating_a_story
     skip 'pending'
-    put '/stories/1', { id: 1, title: 'Lorem epsum', url: 'http://www.l.com' }
+    put '/stories/1', { id: 1, title: 'Lorem epsum', url: 'http://www.l.com' }.to_json,
+                      { "CONTENT_TYPE" => "application/json" }
     assert_equal 204, last_response.status
   end
 
   def test_upvoting_a_story
     authorize @user.username, @user.password
-    patch '/stories/1/vote', { delta: 1 }
+    patch '/stories/1/vote', { delta: 1 }.to_json, { "CONTENT_TYPE" => "application/json" }
     assert_equal 200, last_response.status
     data = JSON.parse last_response.body
     assert_equal 1, data['score']
@@ -80,15 +84,15 @@ class StoriesTest < ActiveSupport::TestCase
 
   def test_second_upvoting_doesnt_affect_story
     authorize @user.username, @user.password
-    patch '/stories/1/vote', { delta: 1 }
-    patch '/stories/1/vote', { delta: 1 }
+    patch '/stories/1/vote', { delta: 1 }.to_json, { "CONTENT_TYPE" => "application/json" }
+    patch '/stories/1/vote', { delta: 1 }.to_json, { "CONTENT_TYPE" => "application/json" }
     data = JSON.parse last_response.body
     assert_equal 1, data['score']
   end
 
   def test_downvoting_a_story
     skip 'pending'
-    patch '/stories/1/vote', { delta: -1 }
+    patch '/stories/1/vote', { delta: -1 }.to_json, { "CONTENT_TYPE" => "application/json" }
     assert_equal 200, last_response.status
   end
 
