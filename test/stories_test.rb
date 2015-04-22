@@ -1,11 +1,6 @@
-require 'rack/test'
-require 'rack/lint'
-require 'minitest/autorun'
-require 'api/stories'
-require 'api/users'
-require 'test_helper'
+require_relative 'test_helper'
 
-class NewsTest < ActiveSupport::TestCase
+class StoriesTest < ActiveSupport::TestCase
   include Rack::Test::Methods
 
   def app
@@ -69,11 +64,6 @@ class NewsTest < ActiveSupport::TestCase
     skip 'pending'
     delete '/stories/1/vote'
     assert_equal 204, last_response.status
-  end
-
-  def test_creating_a_user
-    post '/users', { username: 'Alan', password: 'Ala1Ma2Kota' }
-    assert_equal 201, last_response.status
   end
 
   def test_fetching_not_existing_story
