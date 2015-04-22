@@ -15,7 +15,8 @@ module API
     end
 
     post '/stories' do
-      story = Story.create(title: params[:title], url: params[:url])
+      story = params[:story]
+      story = Story.create!(title: story[:title], url: story[:url])
 
       status 201
       content_type :json

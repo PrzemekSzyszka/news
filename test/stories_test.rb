@@ -35,11 +35,19 @@ class StoriesTest < ActiveSupport::TestCase
   end
 
   def test_submitting_a_new_story
-    post '/stories', { title: 'Lorem epsum', url: 'http://www.lorem.com' }
+    post '/stories', { story: { title: 'Lorem epsum', url: 'http://www.lorem.com' } }
     assert_equal 201, last_response.status
 
     data = JSON.parse last_response.body
     assert data['id'] != nil
+  end
+
+  def test_submitting_new_story_fails_when_title_is_missing
+    post '/stories', { story: { url: 'http://www.lorem.com' } }
+    assert_equal 400, last_response.status
+
+    data = JSON.parse last_response.body
+    assert_equal "Validation failed: Title can't be blank", data['error']
   end
 
   def test_updating_a_story
