@@ -21,6 +21,8 @@ class StoriesTest < ActiveSupport::TestCase
 
     assert_equal 1, data[0]['id']
     assert_equal 2, data[1]['id']
+    assert_equal 0, data[0]['score']
+    assert_equal 0, data[1]['score']
     assert_equal 'application/json', last_response.content_type
   end
 
@@ -30,9 +32,10 @@ class StoriesTest < ActiveSupport::TestCase
     data = JSON.parse last_response.body
 
     assert_equal 1, data['id']
+    assert_equal 0, data['score']
     assert_equal 'Lorem ipsum', data['title']
     assert_equal 'http://www.lipsum.com/', data['url']
-    assert_equal "application/json", last_response.content_type
+    assert_equal 'application/json', last_response.content_type
   end
 
   def test_submitting_a_new_story
@@ -58,7 +61,7 @@ class StoriesTest < ActiveSupport::TestCase
     assert_equal 401, last_response.status
 
     data = JSON.parse last_response.body
-    assert_equal "Not authorized", data['error']
+    assert_equal 'Not authorized', data['error']
   end
 
   def test_updating_a_story
@@ -68,9 +71,19 @@ class StoriesTest < ActiveSupport::TestCase
   end
 
   def test_upvoting_a_story
-    skip 'pending'
+    authorize @user.username, @user.password
     patch '/stories/1/vote', { delta: 1 }
     assert_equal 200, last_response.status
+    data = JSON.parse last_response.body
+    assert_equal 1, data['score']
+  end
+
+  def test_second_upvoting_doesnt_affect_story
+    authorize @user.username, @user.password
+    patch '/stories/1/vote', { delta: 1 }
+    patch '/stories/1/vote', { delta: 1 }
+    data = JSON.parse last_response.body
+    assert_equal 1, data['score']
   end
 
   def test_downvoting_a_story
