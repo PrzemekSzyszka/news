@@ -1,11 +1,14 @@
 require "bundler/gem_tasks"
 require './config/environment'
+require 'rake/testtask'
 
 task default: :test
 
-desc 'Run all tests by default'
-task :test => 'db:environment' do
-  exec('bundle exec ruby -Ilib -Itest -Ilib/models test/news_test.rb')
+Rake::TestTask.new do |t|
+  t.libs = ["lib"]
+  t.warning = true
+  t.verbose = true
+  t.test_files = FileList['test/*_test.rb']
 end
 
 namespace :db do
