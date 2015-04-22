@@ -1,5 +1,4 @@
 require_relative 'base'
-require_relative '../models/story'
 
 module API
   class Stories < Base
@@ -13,7 +12,7 @@ module API
     end
 
     post '/stories' do
-      protected!
+      authenticate!
       story = params[:story]
       story = Story.create!(title: story[:title], url: story[:url])
 

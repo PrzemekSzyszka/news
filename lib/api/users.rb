@@ -1,5 +1,4 @@
 require_relative 'base'
-require_relative '../models/user'
 
 module API
   class Users < Base

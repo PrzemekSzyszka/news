@@ -1,6 +1,9 @@
 require './config/environment'
 require 'sinatra'
 require 'json'
+require './lib/models/story'
+require './lib/models/user'
+require './lib/models/vote'
 
 module API
   class Base < Sinatra::Base
@@ -27,8 +30,8 @@ module API
     end
 
     helpers do
-      def protected!
-        return if authorized?
+      def authenticate!
+        return user if authorized?
         headers['WWW-Authenticate'] = 'Basic realm="Restricted Area"'
         halt 401, { error: 'Not authorized' }.to_json
       end
@@ -48,6 +51,10 @@ module API
 
     def user_found?(credentials)
       User.where(username: credentials[0], password: credentials[1]).present?
+    end
+
+    def user
+      User.where(username: @auth.credentials[0], password: @auth.credentials[1]).first
     end
   end
 end
