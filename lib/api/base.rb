@@ -13,6 +13,12 @@ module API
       use ActiveRecord::ConnectionAdapters::ConnectionManagement
     end
 
+    before do
+      body = request.body.read.to_s
+      data = JSON.parse body if body.present?
+      @data = JSON.parse body if body.present?
+    end
+
     after do
       content_type :json
     end

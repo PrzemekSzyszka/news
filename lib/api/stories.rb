@@ -8,13 +8,13 @@ module API
     end
 
     get '/stories/:id' do
-      Story.find(params[:id]).to_json
+      Story.find(params['id']).to_json
     end
 
     post '/stories' do
       authenticate!
-      story = params[:story]
-      story = Story.create!(title: story[:title], url: story[:url])
+      story = @data['story']
+      story = Story.create!(title: story['title'], url: story['url'])
 
       status 201
       { id: story.id, score: story.score }.to_json
@@ -22,12 +22,12 @@ module API
 
     patch '/stories/:id/vote' do
       user = authenticate!
-      vote = Vote.find_or_create_by(user_id: user.id, story_id: params[:id])
-      vote.value = params[:delta]
+      vote = Vote.find_or_create_by(user_id: user.id, story_id: params['id'])
+      vote.value = @data['delta']
       vote.save
 
       status 200
-      { score: Story.find(params[:id]).score }.to_json
+      { score: Story.find(params['id']).score }.to_json
     end
   end
 end
