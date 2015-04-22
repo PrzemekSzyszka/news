@@ -13,7 +13,7 @@ module API
       use ActiveRecord::ConnectionAdapters::ConnectionManagement
     end
 
-    before do
+    after do
       content_type :json
     end
 
