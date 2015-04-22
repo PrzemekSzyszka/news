@@ -10,16 +10,17 @@ module API
       use ActiveRecord::ConnectionAdapters::ConnectionManagement
     end
 
-    error ActiveRecord::RecordNotFound do
+    before do
       content_type :json
-      status 404
+    end
 
+    error ActiveRecord::RecordNotFound do
+      status 404
 
       error_message
     end
 
     error ActiveRecord::RecordInvalid do
-      content_type :json
       status 400
 
       error_message
