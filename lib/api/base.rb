@@ -10,12 +10,12 @@ module API
       use ActiveRecord::ConnectionAdapters::ConnectionManagement
     end
 
-    error { |err|
-      Rack::Response.new(
-        [{'error' => err.message}.to_json],
-        404,
-        {'Content-type' => 'application/json'}
-      ).finish
-    }
+    error ActiveRecord::RecordNotFound do
+      content_type :json
+      status 404
+
+      e = env['sinatra.error']
+      { error: e.message }.to_json
+    end
   end
 end
