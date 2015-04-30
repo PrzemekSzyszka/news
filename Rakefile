@@ -1,6 +1,8 @@
-require "bundler/gem_tasks"
-require './config/environment'
+require 'bundler/gem_tasks'
 require 'rake/testtask'
+require 'rake'
+require 'dotenv/tasks'
+require_relative 'config/environment'
 
 task default: :test
 

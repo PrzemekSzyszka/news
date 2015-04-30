@@ -1,6 +1,6 @@
-require './config/environment'
 require 'sinatra'
 require 'json'
+require './config/environment'
 require './lib/models/story'
 require './lib/models/user'
 require './lib/models/vote'
