@@ -28,5 +28,13 @@ module API
 
       status 204
     end
+
+    delete '/stories/:id/vote' do |id|
+      user = authenticate!
+      vote = Vote.find_by(user_id: user.id, story_id: id)
+      Vote.delete(vote) if vote
+
+      status 204
+    end
   end
 end

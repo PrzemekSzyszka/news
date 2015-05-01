@@ -117,9 +117,19 @@ class StoriesTest < ActiveSupport::TestCase
   end
 
   def test_undoing_a_vote
-    skip 'pending'
+    authorize @username, @password
+    patch '/stories/1/vote', { delta: 1 }.to_json, { "CONTENT_TYPE" => "application/json" }
+    get '/stories/1'
+    data = JSON.parse last_response.body
+    assert_equal 1, data['score']
+
     delete '/stories/1/vote'
     assert_equal 204, last_response.status
+    assert_equal '', last_response.body
+
+    get '/stories/1'
+    data = JSON.parse last_response.body
+    assert_equal 0, data['score']
   end
 
   def test_fetching_not_existing_story
