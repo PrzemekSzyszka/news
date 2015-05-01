@@ -38,14 +38,18 @@ module API
 
     helpers do
       def authenticate!
-        return user if authorized?
+        user = authorize
+        return user if user.present?
         headers['WWW-Authenticate'] = 'Basic realm="Restricted Area"'
         halt 401, { error: 'Not authorized' }.to_json
       end
 
-      def authorized?
+      def authorize
         @auth ||=  Rack::Auth::Basic::Request.new(request.env)
-        @auth.provided? and @auth.basic? and @auth.credentials and user = user_found?(@auth.credentials)
+        if @auth.provided? && @auth.basic? && @auth.credentials
+          user = User.find_by(username: @auth.credentials[0])
+          user.password == @auth.credentials[1] ? user : nil
+        end
       end
     end
 
@@ -54,14 +58,6 @@ module API
     def error_message
       e = env['sinatra.error']
       { error: e.message }.to_json
-    end
-
-    def user_found?(credentials)
-      User.where(username: credentials[0], password: BCrypt::Password.create(credentials[1]))
-    end
-
-    def user
-      User.where(username: @auth.credentials[0], password: @auth.credentials[1]).first
     end
   end
 end
