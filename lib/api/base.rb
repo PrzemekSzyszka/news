@@ -1,5 +1,6 @@
 require 'sinatra'
 require 'json'
+require 'bcrypt'
 require './config/environment'
 require './lib/models/story'
 require './lib/models/user'
@@ -44,7 +45,7 @@ module API
 
       def authorized?
         @auth ||=  Rack::Auth::Basic::Request.new(request.env)
-        @auth.provided? and @auth.basic? and @auth.credentials and user_found?(@auth.credentials)
+        @auth.provided? and @auth.basic? and @auth.credentials and user = user_found?(@auth.credentials)
       end
     end
 
@@ -56,7 +57,7 @@ module API
     end
 
     def user_found?(credentials)
-      User.where(username: credentials[0], password: credentials[1]).present?
+      User.where(username: credentials[0], password: BCrypt::Password.create(credentials[1]))
     end
 
     def user

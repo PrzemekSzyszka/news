@@ -25,4 +25,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "activerecord", "~> 4.2.0"
   spec.add_development_dependency "sqlite3", "~> 1.3.1"
   spec.add_development_dependency "database_cleaner", "~> 1.3.0"
+  spec.add_development_dependency "bcrypt-ruby", "~> 3.1.5"
 end
