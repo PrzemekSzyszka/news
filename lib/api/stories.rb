@@ -26,8 +26,7 @@ module API
       vote.value = @data['delta']
       vote.save
 
-      status 200
-      { score: Story.find(params['id']).score }.to_json
+      status 204
     end
   end
 end

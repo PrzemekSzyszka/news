@@ -80,15 +80,16 @@ class StoriesTest < ActiveSupport::TestCase
   def test_upvoting_a_story
     authorize @username, @password
     patch '/stories/1/vote', { delta: 1 }.to_json, { "CONTENT_TYPE" => "application/json" }
-    assert_equal 200, last_response.status
-    data = JSON.parse last_response.body
-    assert_equal 1, data['score']
+    assert_equal 204, last_response.status
+    assert_equal '', last_response.body
   end
 
   def test_second_upvoting_doesnt_affect_story
     authorize @username, @password
     patch '/stories/1/vote', { delta: 1 }.to_json, { "CONTENT_TYPE" => "application/json" }
     patch '/stories/1/vote', { delta: 1 }.to_json, { "CONTENT_TYPE" => "application/json" }
+    get '/stories/1'
+
     data = JSON.parse last_response.body
     assert_equal 1, data['score']
   end
