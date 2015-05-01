@@ -30,7 +30,7 @@ module API
     end
 
     error ActiveRecord::RecordInvalid do
-      status 400
+      status 422
 
       error_message
     end

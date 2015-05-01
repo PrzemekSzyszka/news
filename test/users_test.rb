@@ -18,7 +18,7 @@ class UsersTest < ActiveSupport::TestCase
 
   def test_fails_to_create_a_user_without_username
     post '/users', { user: { password: 'Ala1Ma2Kota' } }.to_json, { "CONTENT_TYPE" => "application/json" }
-    assert_equal 400, last_response.status
+    assert_equal 422, last_response.status
 
     data = JSON.parse last_response.body
     assert_equal "Validation failed: Username can't be blank", data['error']

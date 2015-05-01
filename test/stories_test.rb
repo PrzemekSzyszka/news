@@ -52,7 +52,7 @@ class StoriesTest < ActiveSupport::TestCase
     authorize @user.username, @user.password
     post '/stories', { story: { url: 'http://www.lorem.com' } }.to_json,
                      { "CONTENT_TYPE" => "application/json" }
-    assert_equal 400, last_response.status
+    assert_equal 422, last_response.status
 
     data = JSON.parse last_response.body
     assert_equal "Validation failed: Title can't be blank", data['error']
