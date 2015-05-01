@@ -10,6 +10,6 @@ class Story < ActiveRecord::Base
   end
 
   def as_json(options)
-    super.merge({ score: self.score })
+    super(options).merge(score: self.score)
   end
 end

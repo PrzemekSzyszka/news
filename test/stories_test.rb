@@ -40,17 +40,18 @@ class StoriesTest < ActiveSupport::TestCase
 
   def test_submitting_a_new_story
     authorize @user.username, @user.password
-    post '/stories', { story: { title: 'Lorem epsum', url: 'http://www.lorem.com' } }.to_json,
+    post '/stories', { title: 'Lorem epsum', url: 'http://www.lorem.com' }.to_json,
                      { "CONTENT_TYPE" => "application/json" }
     assert_equal 201, last_response.status
 
+    assert_equal '/stories', last_response.original_headers['Location']
     data = JSON.parse last_response.body
     assert data['id'] != nil
   end
 
   def test_submitting_new_story_fails_when_title_is_missing
     authorize @user.username, @user.password
-    post '/stories', { story: { url: 'http://www.lorem.com' } }.to_json,
+    post '/stories', { url: 'http://www.lorem.com' }.to_json,
                      { "CONTENT_TYPE" => "application/json" }
     assert_equal 422, last_response.status
 
@@ -59,7 +60,7 @@ class StoriesTest < ActiveSupport::TestCase
   end
 
   def test_unauthorized_user_fails_to_submit_story
-    post '/stories', { story: { title: 'Lorem epsum', url: 'http://www.lorem.com' } }.to_json,
+    post '/stories', { title: 'Lorem epsum', url: 'http://www.lorem.com' }.to_json,
                      { "CONTENT_TYPE" => "application/json" }
     assert_equal 401, last_response.status
 

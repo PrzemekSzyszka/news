@@ -13,10 +13,10 @@ module API
 
     post '/stories' do
       authenticate!
-      story = @data['story']
-      story = Story.create!(title: story['title'], url: story['url'])
+      story = Story.create!(title: @data['title'], url: @data['url'])
 
       status 201
+      headers['Location'] = '/stories'
       { id: story.id, score: story.score }.to_json
     end
 

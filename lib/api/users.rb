@@ -4,8 +4,7 @@ module API
   class Users < Base
 
     post '/users' do
-      user = @data['user']
-      User.create!(username: user['username'], password: user['password'])
+      User.create!(username: @data['username'], password: @data['password'])
       status 201
     end
   end
