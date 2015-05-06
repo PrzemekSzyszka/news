@@ -1,23 +1,39 @@
 require 'sinatra'
+require 'sinatra/respond_with'
 require 'json'
 require 'bcrypt'
 require './config/environment'
 require './lib/models/story'
 require './lib/models/user'
 require './lib/models/vote'
+require_relative 'errors'
 
 module API
   class Base < Sinatra::Base
+    include Errors
+
     set :show_exceptions => false
+
+    register Sinatra::RespondWith
+    respond_to :json, :xml
 
     configure do
       use ActiveRecord::ConnectionAdapters::ConnectionManagement
     end
 
     before do
-      body = request.body.read.to_s
-      data = JSON.parse body if body.present?
-      @data = JSON.parse body if body.present?
+      @data = ""
+      request.accept.each do |type|
+        case type.to_s
+        when 'application/xml', 'text/xml'
+          body = request.body.read
+          @data = Hash.from_xml(body.gsub("\n", ""))
+          @data = @data['hash'] if @data.present?
+        else
+          body = request.body.read.to_s
+          @data = JSON.parse body if body.present?
+        end
+      end
     end
 
     after do
@@ -36,12 +52,23 @@ module API
       error_message
     end
 
+    error AuthenticationError do
+      status 401
+      headers 'WWW-Authenticate' => 'Basic realm="Restricted Area"'
+      respond_with error: 'Not authenticated'
+    end
+
+    error AuthorizationError do
+      status 403
+      respond_with error: 'Not authorized'
+    end
+
     helpers do
       def authenticate!
         user = authorize
         return user if user.present?
         headers['WWW-Authenticate'] = 'Basic realm="Restricted Area"'
-        halt 401, { error: 'Not authorized' }.to_json
+        raise AuthenticationError
       end
 
       def authorize
@@ -53,15 +80,11 @@ module API
       end
     end
 
-    def raise_forbidden_action_error
-      halt 403, { error: 'Forbidden for user' }.to_json
-    end
-
     private
 
     def error_message
       e = env['sinatra.error']
-      { error: e.message }.to_json
+      respond_with error: e.message
     end
   end
 end

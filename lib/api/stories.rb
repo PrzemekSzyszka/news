@@ -4,11 +4,11 @@ module API
   class Stories < Base
 
     get '/stories' do
-      Story.all.to_json
+      respond_with Story.all
     end
 
     get '/stories/:id' do
-      Story.find(params['id']).to_json
+      respond_with Story.find(params['id'])
     end
 
     post '/stories' do
@@ -17,7 +17,7 @@ module API
 
       status 201
       headers['Location'] = '/stories'
-      { id: story.id, score: story.score }.to_json
+      respond_with(id: story.id, score: story.score)
     end
 
     put '/stories/:id' do |id|
@@ -28,9 +28,9 @@ module API
 
         status 204
         headers['Location'] = '/stories'
-        { id: story.id, score: story.score }.to_json
+        respond_with(id: story.id, score: story.score)
       else
-        raise_forbidden_action_error
+        raise AuthorizationError
       end
     end
 
