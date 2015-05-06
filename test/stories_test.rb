@@ -11,9 +11,11 @@ class StoriesTest < ActiveSupport::TestCase
     super
     @username = 'Ziom'
     @password = 'password'
-    user = User.create!(username: @username, password_hash: @password)
-    Story.create!(id: 1, title: 'Lorem ipsum', url: 'http://www.lipsum.com/')
-    Story.create!(id: 2, title: 'Lorem ipsum', url: 'http://www.lipsum.com/')
+    @not_authorized_username = 'Czesio'
+    user = User.create!(id: 1, username: @username, password_hash: @password)
+    User.create!(id: 2, username: @not_authorized_username, password_hash: @password)
+    Story.create!(id: 1, title: 'Lorem ipsum', url: 'http://www.lipsum.com/', user: user)
+    Story.create!(id: 2, title: 'Lorem ipsum', url: 'http://www.lipsum.com/', user: user)
   end
 
   def test_app_returns_submitted_stories
@@ -42,7 +44,7 @@ class StoriesTest < ActiveSupport::TestCase
 
   def test_submitting_a_new_story
     authorize @username, @password
-    post '/stories', { title: 'Lorem epsum', url: 'http://www.lorem.com' }.to_json,
+    post '/stories', { title: 'Lorem epsum', url: 'http://www.lorem.com', user_id: 1 }.to_json,
                      { "CONTENT_TYPE" => "application/json" }
     assert_equal 201, last_response.status
 
@@ -53,7 +55,7 @@ class StoriesTest < ActiveSupport::TestCase
 
   def test_submitting_new_story_fails_when_title_is_missing
     authorize @username, @password
-    post '/stories', { url: 'http://www.lorem.com' }.to_json,
+    post '/stories', { url: 'http://www.lorem.com', user_id: 1 }.to_json,
                      { "CONTENT_TYPE" => "application/json" }
     assert_equal 422, last_response.status
 
@@ -71,10 +73,21 @@ class StoriesTest < ActiveSupport::TestCase
   end
 
   def test_updating_a_story
-    skip 'pending'
-    put '/stories/1', { id: 1, title: 'Lorem epsum', url: 'http://www.l.com' }.to_json,
+    authorize @username, @password
+    put '/stories/1', { id: 1, url: 'http://www.l.com' }.to_json,
                       { "CONTENT_TYPE" => "application/json" }
     assert_equal 204, last_response.status
+
+    get '/stories/1'
+    data = JSON.parse last_response.body
+    assert_equal 'http://www.l.com', data['url']
+  end
+
+  def test_updating_story_fails_for_not_authorized_user
+    authorize @not_authorized_username, @password
+    put '/stories/1', { id: 1, url: 'http://www.l.com' }.to_json,
+                      { "CONTENT_TYPE" => "application/json" }
+    assert_equal 403, last_response.status
   end
 
   def test_upvoting_a_story
