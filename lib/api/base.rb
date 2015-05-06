@@ -53,6 +53,10 @@ module API
       end
     end
 
+    def raise_forbidden_action_error
+      halt 403, { error: 'Forbidden for user' }.to_json
+    end
+
     private
 
     def error_message

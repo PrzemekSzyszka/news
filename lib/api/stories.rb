@@ -13,11 +13,25 @@ module API
 
     post '/stories' do
       authenticate!
-      story = Story.create!(title: @data['title'], url: @data['url'])
+      story = Story.create!(title: @data['title'], url: @data['url'], user_id: @data['user_id'])
 
       status 201
       headers['Location'] = '/stories'
       { id: story.id, score: story.score }.to_json
+    end
+
+    put '/stories/:id' do |id|
+      user = authenticate!
+
+      if story = user.stories.find_by(id: id)
+        story.update(@data)
+
+        status 204
+        headers['Location'] = '/stories'
+        { id: story.id, score: story.score }.to_json
+      else
+        raise_forbidden_action_error
+      end
     end
 
     patch '/stories/:id/vote' do

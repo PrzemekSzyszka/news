@@ -1,8 +1,9 @@
 require 'active_record'
 
 class Story < ActiveRecord::Base
-  validates :title, :url, presence: true
+  validates :title, :url, :user_id, presence: true
 
+  belongs_to :user
   has_many :votes
 
   def score

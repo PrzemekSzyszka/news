@@ -4,6 +4,7 @@ class User < ActiveRecord::Base
   validates :username, :password_hash, presence: true
   validates :username, uniqueness: true
   has_many :votes
+  has_many :stories
 
   before_create :encrypt_password
 
