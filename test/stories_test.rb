@@ -11,11 +11,11 @@ class StoriesTest < ActiveSupport::TestCase
     super
     @username = 'Ziom'
     @password = 'password'
-    @not_authorized_username = 'Czesio'
+    @second_username = 'Czesio'
     user = User.create!(id: 1, username: @username, password_hash: @password)
-    User.create!(id: 2, username: @not_authorized_username, password_hash: @password)
-    Story.create!(id: 1, title: 'Lorem ipsum', url: 'http://www.lipsum.com/', user: user)
-    Story.create!(id: 2, title: 'Lorem ipsum', url: 'http://www.lipsum.com/', user: user)
+    User.create!(id: 2, username: @second_username, password_hash: @password)
+    @story1 = Story.create!(id: 1, title: 'Lorem ipsum', url: 'http://www.lipsum.com/', user: user)
+    @story2 = Story.create!(id: 2, title: 'Lorem ipsum', url: 'http://www.lipsum.com/', user: user)
   end
 
   def test_app_returns_submitted_stories
@@ -28,6 +28,20 @@ class StoriesTest < ActiveSupport::TestCase
     assert_equal 0, data[0]['score']
     assert_equal 0, data[1]['score']
     assert_equal 'application/json', last_response.content_type
+  end
+
+  def test_returns_all_stories_in_xml_format
+    header 'Accept', 'application/xml'
+
+    get '/stories'
+    assert_equal [@story1, @story2].to_xml, last_response.body
+  end
+
+  def test_returns_all_stories_in_format_with_higher_q
+    header 'Accept', 'application/xml;q=0.4 application/json;q=0.8'
+
+    get '/stories'
+    assert_equal [@story1, @story2].to_json, last_response.body
   end
 
   def test_getting_an_single_story
@@ -53,6 +67,14 @@ class StoriesTest < ActiveSupport::TestCase
     assert data['id'] != nil
   end
 
+  def test_submitting_new_story_in_xml_format
+    authorize @username, @password
+    header 'Accept', 'application/xml'
+    post '/stories', { title: 'Lorem epsum', url: 'http://www.lorem.com', user_id: 1 }.to_xml,
+                     { "CONTENT_TYPE" => "application/xml" }
+    assert_equal 201, last_response.status
+  end
+
   def test_submitting_new_story_fails_when_title_is_missing
     authorize @username, @password
     post '/stories', { url: 'http://www.lorem.com', user_id: 1 }.to_json,
@@ -69,7 +91,7 @@ class StoriesTest < ActiveSupport::TestCase
     assert_equal 401, last_response.status
 
     data = JSON.parse last_response.body
-    assert_equal 'Not authorized', data['error']
+    assert_equal 'Not authenticated', data['error']
   end
 
   def test_updating_a_story
@@ -84,7 +106,7 @@ class StoriesTest < ActiveSupport::TestCase
   end
 
   def test_updating_story_fails_for_not_authorized_user
-    authorize @not_authorized_username, @password
+    authorize @second_username, @password
     put '/stories/1', { id: 1, url: 'http://www.l.com' }.to_json,
                       { "CONTENT_TYPE" => "application/json" }
     assert_equal 403, last_response.status
