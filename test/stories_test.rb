@@ -173,4 +173,10 @@ class StoriesTest < ActiveSupport::TestCase
     data = JSON.parse last_response.body
     assert_equal "Couldn't find Story with 'id'=400", data["error"]
   end
+
+  def test_redirects_user_to_story_url
+    get '/stories/1/url'
+    assert_equal 302, last_response.status
+    assert_equal "http://www.lipsum.com/", last_response.location
+  end
 end

@@ -7,8 +7,12 @@ module API
       respond_with Story.all
     end
 
-    get '/stories/:id' do
-      respond_with Story.find(params['id'])
+    get '/stories/:id' do |id|
+      respond_with Story.find(id)
+    end
+
+    get '/stories/:id/url' do |id|
+      redirect Story.find(id).url, 302
     end
 
     post '/stories' do
