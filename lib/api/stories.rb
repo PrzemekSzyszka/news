@@ -16,8 +16,8 @@ module API
     end
 
     post '/stories' do
-      authenticate!
-      story = Story.create!(title: @data['title'], url: @data['url'], user_id: @data['user_id'])
+      user = authenticate!
+      story = Story.create!(title: @data['title'], url: @data['url'], user_id: user.id)
 
       status 201
       headers['Location'] = '/stories'

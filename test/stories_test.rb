@@ -58,7 +58,7 @@ class StoriesTest < ActiveSupport::TestCase
 
   def test_submitting_a_new_story
     authorize @username, @password
-    post '/stories', { title: 'Lorem epsum', url: 'http://www.lorem.com', user_id: 1 }.to_json,
+    post '/stories', { title: 'Lorem epsum', url: 'http://www.lorem.com' }.to_json,
                      { "CONTENT_TYPE" => "application/json" }
     assert_equal 201, last_response.status
 
@@ -70,14 +70,14 @@ class StoriesTest < ActiveSupport::TestCase
   def test_submitting_new_story_in_xml_format
     authorize @username, @password
     header 'Accept', 'application/xml'
-    post '/stories', { title: 'Lorem epsum', url: 'http://www.lorem.com', user_id: 1 }.to_xml,
+    post '/stories', { title: 'Lorem epsum', url: 'http://www.lorem.com' }.to_xml,
                      { "CONTENT_TYPE" => "application/xml" }
     assert_equal 201, last_response.status
   end
 
   def test_submitting_new_story_fails_when_title_is_missing
     authorize @username, @password
-    post '/stories', { url: 'http://www.lorem.com', user_id: 1 }.to_json,
+    post '/stories', { url: 'http://www.lorem.com' }.to_json,
                      { "CONTENT_TYPE" => "application/json" }
     assert_equal 422, last_response.status
 
