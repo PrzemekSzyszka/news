@@ -14,8 +14,8 @@ class StoriesTest < ActiveSupport::TestCase
     @second_username = 'Czesio'
     user = User.create!(id: 1, username: @username, password_hash: @password)
     User.create!(id: 2, username: @second_username, password_hash: @password)
-    @story1 = Story.create!(id: 1, title: 'Lorem ipsum', url: 'http://www.lipsum.com/', user: user)
-    @story2 = Story.create!(id: 2, title: 'Lorem ipsum', url: 'http://www.lipsum.com/', user: user)
+    @story1 = Story.create!(title: 'Lorem ipsum', url: 'http://www.lipsum.com/', user: user)
+    @story2 = Story.create!(title: 'Lorem ipsum', url: 'http://www.lipsum.com/', user: user)
   end
 
   def test_app_returns_submitted_stories
@@ -23,8 +23,8 @@ class StoriesTest < ActiveSupport::TestCase
     assert_equal 200, last_response.status
     data = JSON.parse last_response.body
 
-    assert_equal 1, data[0]['id']
-    assert_equal 2, data[1]['id']
+    assert_equal @story1.id, data[0]['id']
+    assert_equal @story2.id, data[1]['id']
     assert_equal 0, data[0]['score']
     assert_equal 0, data[1]['score']
     assert_equal 'application/json', last_response.content_type
@@ -45,11 +45,11 @@ class StoriesTest < ActiveSupport::TestCase
   end
 
   def test_getting_an_single_story
-    get '/stories/1'
+    get "/stories/#{@story1.id}"
     assert_equal 200, last_response.status
     data = JSON.parse last_response.body
 
-    assert_equal 1, data['id']
+    assert_equal @story1.id, data['id']
     assert_equal 0, data['score']
     assert_equal 'Lorem ipsum', data['title']
     assert_equal 'http://www.lipsum.com/', data['url']
@@ -96,19 +96,19 @@ class StoriesTest < ActiveSupport::TestCase
 
   def test_updating_a_story
     authorize @username, @password
-    put '/stories/1', { id: 1, url: 'http://www.l.com' }.to_json,
-                      { "CONTENT_TYPE" => "application/json" }
+    put "/stories/#{@story1.id}", { id: @story1.id, url: 'http://www.l.com' }.to_json,
+                                  { "CONTENT_TYPE" => "application/json" }
     assert_equal 204, last_response.status
 
-    get '/stories/1'
+    get "/stories/#{@story1.id}"
     data = JSON.parse last_response.body
     assert_equal 'http://www.l.com', data['url']
   end
 
   def test_updating_story_fails_for_not_authorized_user
     authorize @second_username, @password
-    put '/stories/1', { id: 1, url: 'http://www.l.com' }.to_json,
-                      { "CONTENT_TYPE" => "application/json" }
+    put "/stories/#{@story1.id}", { id: @story1.id, url: 'http://www.l.com' }.to_json,
+                                  { "CONTENT_TYPE" => "application/json" }
     assert_equal 403, last_response.status
   end
 
@@ -122,9 +122,9 @@ class StoriesTest < ActiveSupport::TestCase
 
   def test_second_upvoting_doesnt_affect_story
     authorize @username, @password
-    patch '/stories/1/vote', { delta: 1 }.to_json, { "CONTENT_TYPE" => "application/json" }
-    patch '/stories/1/vote', { delta: 1 }.to_json, { "CONTENT_TYPE" => "application/json" }
-    get '/stories/1'
+    patch "/stories/#{@story1.id}/vote", { delta: 1 }.to_json, { "CONTENT_TYPE" => "application/json" }
+    patch "/stories/#{@story1.id}/vote", { delta: 1 }.to_json, { "CONTENT_TYPE" => "application/json" }
+    get "/stories/#{@story1.id}"
 
     data = JSON.parse last_response.body
     assert_equal 1, data['score']
@@ -132,7 +132,7 @@ class StoriesTest < ActiveSupport::TestCase
 
   def test_downvoting_a_story
     authorize @username, @password
-    patch '/stories/1/vote', { delta: -1 }.to_json, { "CONTENT_TYPE" => "application/json" }
+    patch "/stories/#{@story1.id}/vote", { delta: -1 }.to_json, { "CONTENT_TYPE" => "application/json" }
 
     assert_equal 204, last_response.status
     assert_equal '', last_response.body
@@ -140,29 +140,29 @@ class StoriesTest < ActiveSupport::TestCase
 
   def test_user_downvotes_a_story_upvoted_previously
     authorize @username, @password
-    patch '/stories/1/vote', { delta: 1 }.to_json, { "CONTENT_TYPE" => "application/json" }
-    get '/stories/1'
+    patch "/stories/#{@story1.id}/vote", { delta: 1 }.to_json, { "CONTENT_TYPE" => "application/json" }
+    get "/stories/#{@story1.id}"
     data = JSON.parse last_response.body
     assert_equal 1, data['score']
 
-    patch '/stories/1/vote', { delta: -1 }.to_json, { "CONTENT_TYPE" => "application/json" }
-    get '/stories/1'
+    patch "/stories/#{@story1.id}/vote", { delta: -1 }.to_json, { "CONTENT_TYPE" => "application/json" }
+    get "/stories/#{@story1.id}"
     data = JSON.parse last_response.body
     assert_equal -1, data['score']
   end
 
   def test_undoing_a_vote
     authorize @username, @password
-    patch '/stories/1/vote', { delta: 1 }.to_json, { "CONTENT_TYPE" => "application/json" }
-    get '/stories/1'
+    patch "/stories/#{@story1.id}/vote", { delta: 1 }.to_json, { "CONTENT_TYPE" => "application/json" }
+    get "/stories/#{@story1.id}"
     data = JSON.parse last_response.body
     assert_equal 1, data['score']
 
-    delete '/stories/1/vote'
+    delete "/stories/#{@story1.id}/vote"
     assert_equal 204, last_response.status
     assert_equal '', last_response.body
 
-    get '/stories/1'
+    get "/stories/#{@story1.id}"
     data = JSON.parse last_response.body
     assert_equal 0, data['score']
   end
@@ -175,7 +175,7 @@ class StoriesTest < ActiveSupport::TestCase
   end
 
   def test_redirects_user_to_story_url
-    get '/stories/1/url'
+    get "/stories/#{@story1.id}/url"
     assert_equal 302, last_response.status
     assert_equal "http://www.lipsum.com/", last_response.location
   end
