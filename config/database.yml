@@ -1,17 +1,17 @@
-default: &default
+default: &defaults
   adapter: postgresql
   pool: 5
   timeout: 5000
   encoding: unicode
 
 development:
-  <<: *default
+  <<: *defaults
   database: development_news
 
 test:
-  <<: *default
+  <<: *defaults
   database: test_news
 
 production:
-  <<: *default
+  <<: *defaults
   database: production_news
