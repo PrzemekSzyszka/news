@@ -1,12 +1,4 @@
-require 'sinatra'
-require 'sinatra/respond_with'
-require 'json'
-require 'bcrypt'
-require './config/environment'
-require './lib/models/story'
-require './lib/models/user'
-require './lib/models/vote'
-require_relative 'errors'
+require_relative 'application'
 
 module API
   class Base < Sinatra::Base
