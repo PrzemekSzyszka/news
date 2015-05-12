@@ -1,17 +1,17 @@
 default: &default
-  adapter: sqlite3
+  adapter: postgresql
   pool: 5
   timeout: 5000
   encoding: unicode
 
 development:
   <<: *default
-  database: db/development_news.sqlite3
+  database: development_news
 
 test:
   <<: *default
-  database: db/test_news.sqlite3
+  database: test_news
 
 production:
   <<: *default
-  database: db/production_news.sqlite3
+  database: production_news
