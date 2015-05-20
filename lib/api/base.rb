@@ -15,9 +15,12 @@ module API
     end
 
     before do
-      @data = ""
-      request.accept.each do |type|
-        case type.to_s
+      @data = ''
+      content_type = request.content_type.blank? ? 'application/json' : request.content_type
+      request.accept << content_type if request.accept.blank?
+
+      request.accept.each do |accept|
+        case accept.to_s
         when 'application/xml', 'text/xml'
           body = request.body.read
           @data = Hash.from_xml(body.gsub("\n", ""))
@@ -26,6 +29,10 @@ module API
           body = request.body.read.to_s
           @data = JSON.parse body if body.present?
         end
+      end
+      if request.env['HTTP_ACCEPT'] && version = request.env['HTTP_ACCEPT'].split(';').find { |e| /version/ =~ e }
+        version = version.split('=')[1]
+        request.path_info = "/v#{version}#{request.path_info}" if version.present?
       end
     end
 
