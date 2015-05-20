@@ -3,8 +3,8 @@ require 'database_cleaner'
 require 'rack/test'
 require 'rack/lint'
 require 'minitest/autorun'
-require 'api/stories'
-require 'api/users'
+require 'api/v1/stories'
+require 'api/v1/users'
 
 class ActiveSupport::TestCase
   DatabaseCleaner.strategy = :truncation
