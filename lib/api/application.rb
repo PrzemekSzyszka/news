@@ -1,6 +1,7 @@
 require 'sinatra'
 require 'sinatra/respond_with'
 require 'sinatra/router'
+require "sinatra/namespace"
 require 'json'
 require 'bcrypt'
 require './config/environment'

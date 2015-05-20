@@ -7,6 +7,7 @@ module API
     set :show_exceptions => false
 
     register Sinatra::RespondWith
+    register Sinatra::Namespace
     respond_to :json, :xml
 
     configure do
