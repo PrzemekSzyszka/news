@@ -18,6 +18,12 @@ class StoriesTest < ActiveSupport::TestCase
     @story2 = Story.create!(title: 'Lorem ipsum', url: 'http://www.lipsum.com/', user: user)
   end
 
+  def test_app_redirects_to_v1_when_no_version_specified
+    get '/stories'
+    assert_equal 301, last_response.status
+    assert_equal 'Moved permanently', last_response.body
+  end
+
   def test_app_returns_submitted_stories
     get '/v2/stories'
     assert_equal 200, last_response.status
