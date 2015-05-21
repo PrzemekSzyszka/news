@@ -54,6 +54,12 @@ module API
 
         status 204
       end
+
+      delete '/stories/:id' do |id|
+        user = authenticate!
+        Story.destroy(user.stories.find(id))
+        status 204
+      end
     end
   end
 end
