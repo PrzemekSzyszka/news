@@ -200,4 +200,18 @@ class StoriesTest < ActiveSupport::TestCase
     assert_equal 302, last_response.status
     assert_equal "http://www.lipsum.com/", last_response.location
   end
+
+  def test_user_deletes_a_story
+    authorize @username, @password
+    header 'Accept', 'version=2'
+    delete "/stories/#{@story1.id}"
+    assert_equal 204, last_response.status
+  end
+
+  def test_user_fails_to_delete_other_user_story
+    authorize @second_username, @password
+    header 'Accept', 'version=2'
+    delete "/stories/#{@story1.id}"
+    assert_equal 404, last_response.status
+  end
 end
