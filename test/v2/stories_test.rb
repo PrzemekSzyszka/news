@@ -77,7 +77,7 @@ class StoriesTest < ActiveSupport::TestCase
 
   def test_submitting_new_story_in_xml_format
     authorize @username, @password
-    post '/v2/stories', { title: 'Lorem epsum', url: 'http://www.lorem.com' }.to_xml,
+    post '/stories', { title: 'Lorem epsum', url: 'http://www.lorem.com' }.to_xml,
                         { 'CONTENT_TYPE' => 'application/xml', 'HTTP_ACCEPT' => 'application/xml; version=2' }
     assert_equal 201, last_response.status
   end
