@@ -6,6 +6,10 @@ class Story < ActiveRecord::Base
   belongs_to :user
   has_many :votes
 
+  scope :popular, -> { joins("LEFT JOIN votes on stories.id = votes.story_id").group("stories.id")
+                      .order(["sum(value) desc", :id]).limit(10) }
+  scope :recent,  -> { order(:updated_at).limit(10) }
+
   def score
     votes.sum(:value)
   end
