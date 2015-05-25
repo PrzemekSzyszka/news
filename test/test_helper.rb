@@ -20,4 +20,16 @@ class ActiveSupport::TestCase
   def teardown
     DatabaseCleaner.clean
   end
+
+  def prepare_stories
+    users = []
+    10.times do |i|
+      users << User.create(username: "User#{i}", password_hash: "password")
+      story = Story.create(user: users[0], title: "Scala.js no longer experimental #{i}",
+                           url: "http://scala-lang.org/news/2015/02/05/scala-js-no-longer-experimental.html")
+      i.times do |index|
+        Vote.create(user: users[index], story: story, value: 1)
+      end
+    end
+  end
 end
