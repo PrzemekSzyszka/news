@@ -34,6 +34,7 @@ module API
         version = version.split('=')[1]
         request.path_info = "/v#{version}#{request.path_info}" if version.present?
       end
+      set_cache_header(request.path_info)
     end
 
     after do
@@ -81,6 +82,10 @@ module API
     end
 
     private
+
+    def set_cache_header(path_info)
+      cache_control :public, :max_age => 30 if path_info.to_s.include?("/recent")
+    end
 
     def error_message
       e = env['sinatra.error']

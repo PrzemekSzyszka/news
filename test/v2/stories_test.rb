@@ -232,4 +232,10 @@ class StoriesTest < ActiveSupport::TestCase
     assert_equal 10, data.count
     assert_operator data[0]["score"], :>, data[1]["score"]
   end
+
+  def test_recent_endpoint_has_set_cache_control_header
+    header 'Accept', 'version=2'
+    get '/recent'
+    assert_equal "public, max-age=30", last_response.headers["Cache-Control"]
+  end
 end
