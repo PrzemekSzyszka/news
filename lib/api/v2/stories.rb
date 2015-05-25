@@ -4,7 +4,11 @@ module API
   class Stories < Base
     namespace '/v2' do
       get '/stories' do
-        respond_with Story.all
+        respond_with Story.popular
+      end
+
+      get '/recent' do
+        respond_with Story.recent
       end
 
       get '/stories/:id' do |id|
@@ -57,7 +61,7 @@ module API
 
       delete '/stories/:id' do |id|
         user = authenticate!
-        Story.destroy(user.stories.find(id))
+        Story.destroy(id) if user.stories.find(id)
         status 204
       end
     end
