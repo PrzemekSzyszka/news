@@ -1,4 +1,4 @@
-require_relative 'test_helper'
+require_relative '../test_helper'
 
 class UsersTest < ActiveSupport::TestCase
   include Rack::Test::Methods

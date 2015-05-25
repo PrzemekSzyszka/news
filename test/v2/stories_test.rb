@@ -1,4 +1,4 @@
-require_relative 'test_helper'
+require_relative '../test_helper'
 
 class StoriesTest < ActiveSupport::TestCase
   include Rack::Test::Methods
@@ -12,10 +12,10 @@ class StoriesTest < ActiveSupport::TestCase
     @username = 'Ziom'
     @password = 'password'
     @second_username = 'Czesio'
-    user = User.create!(id: 1, username: @username, password_hash: @password)
-    User.create!(id: 2, username: @second_username, password_hash: @password)
-    @story1 = Story.create!(title: 'Lorem ipsum', url: 'http://www.lipsum.com/', user: user)
-    @story2 = Story.create!(title: 'Lorem ipsum', url: 'http://www.lipsum.com/', user: user)
+    @user = User.create!(username: @username, password_hash: @password)
+    User.create!(username: @second_username, password_hash: @password)
+    @story1 = Story.create!(title: 'Lorem ipsum', url: 'http://www.lipsum.com/', user: @user)
+    @story2 = Story.create!(title: 'Lorem ipsum', url: 'http://www.lipsum.com/', user: @user)
   end
 
   def test_app_redirects_to_v1_when_no_version_specified
