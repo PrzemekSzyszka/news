@@ -230,7 +230,6 @@ class StoriesTest < ActiveSupport::TestCase
     get '/stories'
     data = JSON.parse last_response.body
     assert_equal 10, data.count
-    p data
     assert_operator data[0]["score"], :>, data[1]["score"]
   end
 end
