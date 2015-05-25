@@ -12,10 +12,10 @@ class StoriesTest < ActiveSupport::TestCase
     @username = 'Ziom'
     @password = 'password'
     @second_username = 'Czesio'
-    @user = User.create!(username: @username, password_hash: @password)
+    user = User.create!(username: @username, password_hash: @password)
     User.create!(username: @second_username, password_hash: @password)
-    @story1 = Story.create!(title: 'Lorem ipsum', url: 'http://www.lipsum.com/', user: @user)
-    @story2 = Story.create!(title: 'Lorem ipsum', url: 'http://www.lipsum.com/', user: @user)
+    @story1 = Story.create!(title: 'Lorem ipsum', url: 'http://www.lipsum.com/', user: user)
+    @story2 = Story.create!(title: 'Lorem ipsum', url: 'http://www.lipsum.com/', user: user)
   end
 
   def test_app_redirects_to_v1_when_no_version_specified
@@ -213,5 +213,24 @@ class StoriesTest < ActiveSupport::TestCase
     header 'Accept', 'version=2'
     delete "/stories/#{@story1.id}"
     assert_equal 404, last_response.status
+  end
+
+  def test_recent_endpoint_returns_10_stories_sorted_by_updated_at
+    prepare_stories
+    header 'Accept', 'version=2'
+    get '/recent'
+    data = JSON.parse last_response.body
+    assert_equal 10, data.count
+    assert_operator data[0]["updated_at"], :<, data[1]["updated_at"]
+  end
+
+  def test_stories_endpoint_returns_10_stories_sorted_by_votes
+    prepare_stories
+    header 'Accept', 'version=2'
+    get '/stories'
+    data = JSON.parse last_response.body
+    assert_equal 10, data.count
+    p data
+    assert_operator data[0]["score"], :>, data[1]["score"]
   end
 end
