@@ -13,6 +13,8 @@ gem "dotenv-rails", "~> 1.0.2"
 gem "database_cleaner", "~> 1.3.0"
 gem "bcrypt", "~> 3.1.5"
 gem "pg", "~> 0.18.1"
+gem "rack-cache", "~> 1.2"
+gem "dalli", "~> 2.7.4"
 
 group :test, :development do
   gem "pry"
