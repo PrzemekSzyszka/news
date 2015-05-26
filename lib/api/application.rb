@@ -8,6 +8,7 @@ require './config/environment'
 require './lib/models/story'
 require './lib/models/user'
 require './lib/models/vote'
+require './lib/models/board'
 require_relative 'errors'
 
 module API

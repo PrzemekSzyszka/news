@@ -4,7 +4,9 @@ module API
   class Stories < Base
     namespace '/v2' do
       get '/stories' do
-        respond_with Story.popular
+        popular_stories = Story.popular
+        last_modified(popular_stories.first.board.updated_at)
+        respond_with popular_stories
       end
 
       get '/recent' do
