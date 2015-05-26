@@ -8,6 +8,7 @@ module API
 
     register Sinatra::RespondWith
     register Sinatra::Namespace
+    helpers Sinatra::UrlForHelper
     respond_to :json, :xml
 
     configure do
