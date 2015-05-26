@@ -9,7 +9,7 @@ class Story < ActiveRecord::Base
 
   scope :popular, -> { joins("LEFT JOIN votes on stories.id = votes.story_id").group("stories.id")
                       .order(["coalesce(sum(value), 0) desc", :id]).limit(10) }
-  scope :recent,  -> { order(:updated_at).limit(10) }
+  scope :recent,  -> { order(:updated_at) }
 
   def score
     votes.sum(:value)
