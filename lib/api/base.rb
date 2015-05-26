@@ -84,7 +84,7 @@ module API
     private
 
     def set_cache_header(path_info)
-      cache_control :public, :max_age => 30 if path_info.to_s.include?("/recent")
+      cache_control :public, :max_age => 30 if path_info.to_s.include?('/recent')
     end
 
     def error_message

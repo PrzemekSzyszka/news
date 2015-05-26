@@ -24,7 +24,7 @@ module API
       post '/stories' do
         user = authenticate!
         board = Board.first
-        board = Board.create!(name: "example") if board.nil?
+        board = Board.create!(name: 'example') if board.nil?
         story = Story.create!(title: @data['title'], url: @data['url'], user_id: user.id, board: board)
 
         status 201

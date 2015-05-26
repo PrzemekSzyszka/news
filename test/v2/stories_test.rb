@@ -192,7 +192,7 @@ class StoriesTest < ActiveSupport::TestCase
     get '/stories/400'
     assert_equal 404, last_response.status
     data = JSON.parse last_response.body
-    assert_equal "Couldn't find Story with 'id'=400", data["error"]
+    assert_equal "Couldn't find Story with 'id'=400", data['error']
   end
 
   def test_redirects_user_to_story_url
@@ -222,7 +222,7 @@ class StoriesTest < ActiveSupport::TestCase
     get '/recent'
     data = JSON.parse last_response.body
     assert_equal 10, data.count
-    assert_operator data[0]["updated_at"], :<, data[1]["updated_at"]
+    assert_operator data[0]['updated_at'], :<, data[1]['updated_at']
   end
 
   def test_stories_endpoint_returns_10_stories_sorted_by_votes
@@ -231,21 +231,21 @@ class StoriesTest < ActiveSupport::TestCase
     get '/stories'
     data = JSON.parse last_response.body
     assert_equal 10, data.count
-    assert_operator data[0]["score"], :>, data[1]["score"]
+    assert_operator data[0]['score'], :>, data[1]['score']
   end
 
   def test_recent_endpoint_has_set_cache_control_header
     header 'Accept', 'version=2'
     get '/recent'
-    assert_equal "public, max-age=30", last_response.headers["Cache-Control"]
+    assert_equal 'public, max-age=30', last_response.headers['Cache-Control']
   end
 
   def test_stories_endpoint_responds_with_304_if_board_wasnt_updated
     header 'Accept', 'version=2'
     get '/stories'
-    assert_equal @board.updated_at.httpdate, last_response.headers["Last-modified"]
+    assert_equal @board.updated_at.httpdate, last_response.headers['Last-modified']
     header 'Accept', 'version=2'
-    header 'If-Modified-Since', last_response.headers["Last-modified"]
+    header 'If-Modified-Since', last_response.headers['Last-modified']
     get '/stories'
     assert_equal 304, last_response.status
   end
@@ -255,7 +255,7 @@ class StoriesTest < ActiveSupport::TestCase
     get '/stories'
 
     updated_at = @board.updated_at.httpdate
-    assert_equal updated_at, last_response.headers["Last-modified"]
+    assert_equal updated_at, last_response.headers['Last-modified']
 
     sleep 1
 
@@ -265,6 +265,6 @@ class StoriesTest < ActiveSupport::TestCase
     header 'Accept', 'version=2'
     header 'If-Modified-Since', updated_at
     get '/stories'
-    assert_operator updated_at, :<, last_response.headers["Last-modified"]
+    assert_operator updated_at, :<, last_response.headers['Last-modified']
   end
 end
