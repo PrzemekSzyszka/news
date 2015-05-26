@@ -15,6 +15,8 @@ gem "bcrypt", "~> 3.1.5"
 gem "pg", "~> 0.18.1"
 gem "rack-cache", "~> 1.2"
 gem "dalli", "~> 2.7.4"
+gem "kaminari"
+gem "emk-sinatra-url-for", "~> 0.2.1"
 
 group :test, :development do
   gem "pry"
