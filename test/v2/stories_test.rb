@@ -267,4 +267,32 @@ class StoriesTest < ActiveSupport::TestCase
     get '/stories'
     assert_operator updated_at, :<, last_response.headers['Last-modified']
   end
+
+  def test_recent_stories_endpoint_has_next_page_in_link_header
+    prepare_stories
+    header 'Accept', 'version=2'
+    get '/recent'
+
+    assert_equal "<http://example.org/v2/recent&per_page=10&page=2>; rel='next'", last_response.headers['Link']
+  end
+
+  def test_recent_stories_endpoint_has_next_page_and_last_page_set_in_link_header
+    prepare_stories
+    header 'Accept', 'version=2'
+    get '/recent', { per_page: 4 }
+
+    assert_equal "<http://example.org/v2/recent&per_page=4&page=2>; rel='next', "\
+                 "<http://example.org/v2/recent&per_page=4&page=3>; rel='last'", last_response.headers['Link']
+  end
+
+  def test_recent_stories_endpoint_has_all_navigation_links_in_link_header
+    prepare_stories
+    header 'Accept', 'version=2'
+    get '/recent', { per_page: 2, page: 3 }
+
+    assert_equal "<http://example.org/v2/recent&per_page=2&page=4>; rel='next', "\
+                 "<http://example.org/v2/recent&per_page=2&page=6>; rel='last', "\
+                 "<http://example.org/v2/recent&per_page=2&page=2>; rel='prev', "\
+                 "<http://example.org/v2/recent&per_page=2&page=1>; rel='first'", last_response.headers['Link']
+  end
 end
