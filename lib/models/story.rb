@@ -4,6 +4,7 @@ class Story < ActiveRecord::Base
   validates :title, :url, :user_id, presence: true
 
   belongs_to :user
+  belongs_to :board, touch: true
   has_many :votes
 
   scope :popular, -> { joins("LEFT JOIN votes on stories.id = votes.story_id").group("stories.id")
