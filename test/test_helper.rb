@@ -23,9 +23,10 @@ class ActiveSupport::TestCase
 
   def prepare_stories
     users = []
+    board = Board.create(name: "Test board")
     10.times do |i|
       users << User.create(username: "User#{i}", password_hash: "password")
-      story = Story.create(user: users[0], title: "Scala.js no longer experimental #{i}",
+      story = Story.create(user: users[0], title: "Scala.js no longer experimental #{i}", board: board,
                            url: "http://scala-lang.org/news/2015/02/05/scala-js-no-longer-experimental.html")
       i.times do |index|
         Vote.create(user: users[index], story: story, value: 1)

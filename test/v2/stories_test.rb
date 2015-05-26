@@ -12,10 +12,11 @@ class StoriesTest < ActiveSupport::TestCase
     @username = 'Ziom'
     @password = 'password'
     @second_username = 'Czesio'
-    user = User.create!(username: @username, password_hash: @password)
+    @board = Board.create(name: "Example board")
+    user   = User.create!(username: @username, password_hash: @password)
     User.create!(username: @second_username, password_hash: @password)
-    @story1 = Story.create!(title: 'Lorem ipsum', url: 'http://www.lipsum.com/', user: user)
-    @story2 = Story.create!(title: 'Lorem ipsum', url: 'http://www.lipsum.com/', user: user)
+    @story1 = Story.create!(title: 'Lorem ipsum', url: 'http://www.lipsum.com/', user: user, board: @board)
+    @story2 = Story.create!(title: 'Lorem ipsum', url: 'http://www.lipsum.com/', user: user, board: @board)
   end
 
   def test_app_redirects_to_v1_when_no_version_specified
@@ -237,5 +238,33 @@ class StoriesTest < ActiveSupport::TestCase
     header 'Accept', 'version=2'
     get '/recent'
     assert_equal "public, max-age=30", last_response.headers["Cache-Control"]
+  end
+
+  def test_stories_endpoint_responds_with_304_if_board_wasnt_updated
+    header 'Accept', 'version=2'
+    get '/stories'
+    assert_equal @board.updated_at.httpdate, last_response.headers["Last-modified"]
+    header 'Accept', 'version=2'
+    header 'If-Modified-Since', last_response.headers["Last-modified"]
+    get '/stories'
+    assert_equal 304, last_response.status
+  end
+
+  def test_stories_endpoint_responds_with_different_last_modified_header_after_updating_story
+    header 'Accept', 'version=2'
+    get '/stories'
+
+    updated_at = @board.updated_at.httpdate
+    assert_equal updated_at, last_response.headers["Last-modified"]
+
+    sleep 1
+
+    authorize @username, @password
+    put "/stories/#{@story1.id}", { id: @story1.id, url: 'http://www.l.com' }.to_json,
+                                  { 'CONTENT_TYPE' => 'application/json', 'HTTP_ACCEPT' => 'version=2' }
+    header 'Accept', 'version=2'
+    header 'If-Modified-Since', updated_at
+    get '/stories'
+    assert_operator updated_at, :<, last_response.headers["Last-modified"]
   end
 end
