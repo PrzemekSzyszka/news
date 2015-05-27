@@ -1,0 +1,17 @@
+en:
+  unauthorized: 'Unauthorized'
+  authentication_failed: 'Authentication failed'
+  forbidden: 'Forbidden'
+  activerecord:
+    errors:
+      models:
+        story:
+          attributes:
+            title:
+              blank: "can't be blank"
+        user:
+          attributes:
+            username:
+              blank: "can't be blank"
+      messages:
+        record_invalid: 'Validation failed: %{errors}'
