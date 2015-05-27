@@ -25,4 +25,13 @@ class UsersTest < ActiveSupport::TestCase
     data = JSON.parse last_response.body
     assert_equal "Validation failed: Username can't be blank", data['error']
   end
+
+  def test_returns_user_validation_message_in_polish
+    I18n.default_locale = :pl
+    post '/users', { password: 'Ala1Ma2Kota' }.to_json,
+                   { 'CONTENT_TYPE' => 'application/json', 'HTTP_ACCEPT' => 'version=2' }
+    data = JSON.parse last_response.body
+    assert_equal "Walidacja zakończona niepowodzeniem: Nazwa użytkownika nie może być pusta", data['error']
+    I18n.default_locale = :en
+  end
 end

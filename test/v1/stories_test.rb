@@ -92,7 +92,7 @@ class StoriesTest < ActiveSupport::TestCase
     assert_equal 401, last_response.status
 
     data = JSON.parse last_response.body
-    assert_equal 'Not authenticated', data['error']
+    assert_equal 'Unauthorized', data['error']
   end
 
   def test_updating_a_story

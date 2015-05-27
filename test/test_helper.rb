@@ -9,6 +9,7 @@ require 'api/v2/stories'
 require 'api/v2/users'
 require 'api/legacy/stories'
 require 'api/legacy/users'
+require 'i18n'
 
 class ActiveSupport::TestCase
   DatabaseCleaner.strategy = :truncation
