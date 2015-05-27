@@ -31,7 +31,32 @@ class UsersTest < ActiveSupport::TestCase
     post '/users', { password: 'Ala1Ma2Kota' }.to_json,
                    { 'CONTENT_TYPE' => 'application/json', 'HTTP_ACCEPT' => 'version=2' }
     data = JSON.parse last_response.body
-    assert_equal "Walidacja zakończona niepowodzeniem: Nazwa użytkownika nie może być pusta", data['error']
+    assert_equal 'Walidacja zakończona niepowodzeniem: Nazwa użytkownika nie może być pusta', data['error']
     I18n.default_locale = :en
+  end
+
+  def test_returns_user_validation_message_depending_on_http_accept_language_header
+    post '/users', { password: 'Ala1Ma2Kota' }.to_json,
+                   { 'CONTENT_TYPE' => 'application/json', 'HTTP_ACCEPT' => 'version=2',
+                     'HTTP_ACCEPT_LANGUAGE' => 'pl;q=0.9, en;q=0.6' }
+    data = JSON.parse last_response.body
+    assert_equal 'Walidacja zakończona niepowodzeniem: Nazwa użytkownika nie może być pusta', data['error']
+  end
+
+  def test_returns_status_response_using_the_supported_languege_with_highest_q_value
+    post '/users', { password: 'Ala1Ma2Kota' }.to_json,
+                   { 'CONTENT_TYPE' => 'application/json', 'HTTP_ACCEPT' => 'version=2',
+                     'HTTP_ACCEPT_LANGUAGE' => 'de, pl;q=0.9, en;q=0.6' }
+    data = JSON.parse last_response.body
+    assert_equal 'Walidacja zakończona niepowodzeniem: Nazwa użytkownika nie może być pusta', data['error']
+  end
+
+  def test_returns_status_406_when_no_language_is_not_supported
+    post '/users', { password: 'Ala1Ma2Kota' }.to_json,
+                   { 'CONTENT_TYPE' => 'application/json', 'HTTP_ACCEPT' => 'version=2',
+                     'HTTP_ACCEPT_LANGUAGE' => 'de' }
+    data = JSON.parse last_response.body
+    assert_equal 406, last_response.status
+    assert_equal 'Not Acceptable', data['error']
   end
 end
