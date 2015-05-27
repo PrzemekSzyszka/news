@@ -19,6 +19,7 @@ gem "kaminari"
 gem "emk-sinatra-url-for", "~> 0.2.1"
 gem "i18n", "~> 0.7.0"
 gem "rack-contrib"
+gem "rack-accept", "~> 0.4.5"
 
 group :test, :development do
   gem "pry"
