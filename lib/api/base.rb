@@ -8,11 +8,15 @@ module API
 
     register Sinatra::RespondWith
     register Sinatra::Namespace
+    use Rack::Locale
     helpers Sinatra::UrlForHelper
     respond_to :json, :xml
 
     configure do
       use ActiveRecord::ConnectionAdapters::ConnectionManagement
+      I18n::Backend::Simple.send(:include, I18n::Backend::Fallbacks)
+      I18n.load_path = Dir[File.join("./", 'locales', '*.yml')]
+      I18n.backend.load_translations
     end
 
     before do
@@ -57,12 +61,12 @@ module API
     error AuthenticationError do
       status 401
       headers 'WWW-Authenticate' => 'Basic realm="Restricted Area"'
-      respond_with error: 'Not authenticated'
+      respond_with error: I18n.t(:unauthorized)
     end
 
     error AuthorizationError do
       status 403
-      respond_with error: 'Not authorized'
+      respond_with error: I18n.t(:forbidden)
     end
 
     helpers do

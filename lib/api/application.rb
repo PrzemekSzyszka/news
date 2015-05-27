@@ -13,6 +13,10 @@ require './lib/models/board'
 require 'dalli'
 require 'rack/cache'
 require 'kaminari/sinatra'
+require 'rack'
+require 'rack/contrib'
+require 'i18n'
+require 'i18n/backend/fallbacks'
 require_relative 'errors'
 
 module API
