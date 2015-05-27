@@ -66,6 +66,8 @@ GEM
     rack (1.6.1)
     rack-cache (1.2)
       rack (>= 0.4)
+    rack-contrib (1.2.0)
+      rack (>= 0.9.1)
     rack-protection (1.5.3)
       rack
     rack-test (0.6.2)
@@ -114,11 +116,13 @@ DEPENDENCIES
   database_cleaner (~> 1.3.0)
   dotenv-rails (~> 1.0.2)
   emk-sinatra-url-for (~> 0.2.1)
+  i18n (~> 0.7.0)
   kaminari
   news!
   pg (~> 0.18.1)
   pry
   rack-cache (~> 1.2)
+  rack-contrib
   rack-test (~> 0.6.2)
   rails_12factor
   rake (~> 10.0)

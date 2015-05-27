@@ -17,6 +17,8 @@ gem "rack-cache", "~> 1.2"
 gem "dalli", "~> 2.7.4"
 gem "kaminari"
 gem "emk-sinatra-url-for", "~> 0.2.1"
+gem "i18n", "~> 0.7.0"
+gem "rack-contrib"
 
 group :test, :development do
   gem "pry"
