@@ -2,6 +2,7 @@ pl:
   unauthorized: 'Nieautoryzowany dostęp'
   authentication_failed: 'Authentykacja zakończona niepowodzeniem'
   forbidden: 'Zabroniony'
+  not_acceptable: 'Niedozwolony'
   activerecord:
     attributes:
       story:

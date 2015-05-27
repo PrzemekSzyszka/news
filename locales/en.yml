@@ -2,6 +2,7 @@ en:
   unauthorized: 'Unauthorized'
   authentication_failed: 'Authentication failed'
   forbidden: 'Forbidden'
+  not_acceptable: 'Not Acceptable'
   activerecord:
     errors:
       models:

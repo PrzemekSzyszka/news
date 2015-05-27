@@ -1,6 +1,7 @@
 require_relative 'application'
 
 module API
+  SUPPORTED_LANGUAGES = ['pl', 'en']
   class Base < Sinatra::Base
     include Errors
 
@@ -9,6 +10,7 @@ module API
     register Sinatra::RespondWith
     register Sinatra::Namespace
     use Rack::Locale
+    use Rack::Accept
     helpers Sinatra::UrlForHelper
     respond_to :json, :xml
 
@@ -17,6 +19,7 @@ module API
       I18n::Backend::Simple.send(:include, I18n::Backend::Fallbacks)
       I18n.load_path = Dir[File.join("./", 'locales', '*.yml')]
       I18n.backend.load_translations
+      I18n.enforce_available_locales = false
     end
 
     before do
@@ -40,6 +43,7 @@ module API
         request.path_info = "/v#{version}#{request.path_info}" if version.present?
       end
       set_cache_header(request.path_info)
+      set_current_language
     end
 
     after do
@@ -69,6 +73,11 @@ module API
       respond_with error: I18n.t(:forbidden)
     end
 
+    error LanguageNotSupportedError do
+      status 406
+      respond_with error: I18n.t(:not_acceptable)
+    end
+
     helpers do
       def authenticate!
         user = authorize
@@ -90,6 +99,15 @@ module API
 
     def set_cache_header(path_info)
       cache_control :public, :max_age => 30 if path_info.to_s.include?('/recent')
+    end
+
+    def set_current_language
+      if request.env['HTTP_ACCEPT_LANGUAGE'].present?
+        cset     = Rack::Accept::Charset.new(request.env['HTTP_ACCEPT_LANGUAGE'])
+        language = cset.qvalues.max[0]
+        raise LanguageNotSupportedError unless SUPPORTED_LANGUAGES.include?(language)
+        I18n.locale = language
+      end
     end
 
     def error_message

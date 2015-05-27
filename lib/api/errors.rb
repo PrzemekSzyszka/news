@@ -10,4 +10,10 @@ module Errors
       super
     end
   end
+
+  class LanguageNotSupportedError < StandardError
+    def initialize(msg = I18n.t(:not_acceptable))
+      super
+    end
+  end
 end
